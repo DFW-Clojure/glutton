@@ -10,6 +10,10 @@ Be sure to read up on Storm first:
 - https://github.com/nathanmarz/storm/
 - https://github.com/nathanmarz/storm/wiki
 
+Also, watch this video
+
+http://vimeo.com/40972420
+
 To run on a local cluster:
 
 ```bash
