@@ -3,7 +3,7 @@
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.4.0"]
+  :dependencies [[org.clojure/clojure "1.5.1"]
                  [twitter-api "0.7.4"]]
   ;:aot [glutton.TopologySubmitter]
   ;; include storm dependency only in dev because production storm cluster provides it
