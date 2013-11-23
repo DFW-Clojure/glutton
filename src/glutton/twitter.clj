@@ -12,10 +12,10 @@
       (throw (Exception. (format "'%s' is not set." name)))))
 
 (def my-creds
-  (make-oauth-creds (map get-env! ["TWITTER_APP_CONSUMER_KEY"
-                                   "TWITTER_APP_CONSUMER_SECRET"
-                                   "TWITTER_USER_ACCESS_TOKEN"
-                                   "TWITTER_USER_ACCESS_TOKEN_SECRET"])))
+  (apply make-oauth-creds (map get-env! ["TWITTER_APP_CONSUMER_KEY"
+                                         "TWITTER_APP_CONSUMER_SECRET"
+                                         "TWITTER_USER_ACCESS_TOKEN"
+                                         "TWITTER_USER_ACCESS_TOKEN_SECRET"])))
 
 ;; eval block to begin callback stream
 (let [callback (AsyncStreamingCallback.
