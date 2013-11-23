@@ -6,9 +6,9 @@ A Storm project to learn about ingesting data.
 
 Be sure to read up on Storm first:
 
-http://storm-project.net/
-https://github.com/nathanmarz/storm/
-https://github.com/nathanmarz/storm/wiki
+- http://storm-project.net/
+- https://github.com/nathanmarz/storm/
+- https://github.com/nathanmarz/storm/wiki
 
 To run on a local cluster:
 
@@ -26,7 +26,7 @@ lein uberjar
 bin/storm jar path/to/uberjar.jar glutton.TopologySubmitter workers 30 debug false
 ```
 
-or use `[storm-deploy](https://github.com/nathanmarz/storm-deploy/wiki)`
+or use [storm-deploy](https://github.com/nathanmarz/storm-deploy/wiki)
 
 ## License
 
