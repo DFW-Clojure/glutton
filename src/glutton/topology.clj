@@ -6,13 +6,16 @@ More info on the Clojure DSL here:
 https://github.com/nathanmarz/storm/wiki/Clojure-DSL"
   (:require [glutton
              [spouts :refer [type-spout mock-twitter-spout]]
-             [bolts :refer [stormy-bolt glutton-bolt sliding-count-bolt extract-hashtag-bolt]]]
+             [bolts :refer [stormy-bolt glutton-bolt sliding-count-bolt extract-hashtag-bolt]]
+             [twitter :refer [twitter-spout]]
+             ]
             [backtype.storm [clojure :refer [topology spout-spec bolt-spec]] [config :refer :all]])
   (:import [backtype.storm LocalCluster LocalDRPC]))
 
 (defn stormy-topology []
   (topology
-   {"spout" (spout-spec mock-twitter-spout)}
+   {"spout" (spout-spec twitter-spout)}
+   ;{"spout" (spout-spec mock-twitter-spout)}
 
    {
     ;"stormy-bolt" (bolt-spec {"spout" ["type"]} stormy-bolt :p 2)

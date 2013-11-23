@@ -4,8 +4,10 @@
         [twitter.callbacks.handlers]
         [twitter.api.streaming])
   (:require [clojure.data.json :as json]
-            [clojure.java.io :as io])
-  (:import (twitter.callbacks.protocols AsyncStreamingCallback)))
+            [clojure.java.io :as io]
+            [backtype.storm.clojure :refer [defspout spout emit-spout!]])
+  (:import [twitter.callbacks.protocols AsyncStreamingCallback]
+           [java.util.concurrent ConcurrentLinkedQueue]))
 
 (defn- get-env! [name]
   (or (get (System/getenv) name)
@@ -17,18 +19,25 @@
                                          "TWITTER_USER_ACCESS_TOKEN"
                                          "TWITTER_USER_ACCESS_TOKEN_SECRET"])))
 
-;; eval block to begin callback stream
-(let [callback (AsyncStreamingCallback.
-                (fn [_resp payload]
-                  (let [tweet (-> (str payload) json/read-json)]
-                    (spit "twitter-sample" (str tweet "\n") :append true)))
-                (fn [_resp]
-                  (println "closing connection..."))
-                (fn [_resp ex]
-                  (.printStackTrace ex)))]
-  (def sample
-    (statuses-sample :oauth-creds my-creds
-                     :callbacks callback)))
+(defn make-callback [queue]
+  (AsyncStreamingCallback.
+   (fn [_resp payload]
+     (when-let [tweet (-> (str payload) (json/read-str :key-fn keyword) :text)]
+       (.offer queue tweet)))
+   (fn [_resp]
+     (println "closing connection..."))
+   (fn [_resp ex]
+     (.printStackTrace ex))))
 
-;; eval to stop stream
-((:cancel (meta sample)))
+(defspout twitter-spout ["tweet"]
+  [conf context collector]
+  (let [queue (ConcurrentLinkedQueue.)
+        sampler (statuses-sample :oauth-creds my-creds
+                                 :callbacks (make-callback queue))]
+    (spout
+     (close []
+            ((:cancel (meta sampler))))
+     (nextTuple []
+                (if-let [tweet (.poll queue)]
+                  (emit-spout! collector [tweet])
+                  (Thread/sleep 1))))))
