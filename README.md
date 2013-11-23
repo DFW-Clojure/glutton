@@ -1,6 +1,6 @@
 # glutton
 
-A Storm project designed to ... well, that part is up to you.
+A Storm project to learn about ingesting data.
 
 ## Usage
 
