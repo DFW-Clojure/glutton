@@ -18,7 +18,7 @@ https://github.com/nathanmarz/storm/wiki/Clojure-DSL"
     ;"stormy-bolt" (bolt-spec {"spout" ["type"]} stormy-bolt :p 2)
     ;"glutton-bolt" (bolt-spec {"stormy-bolt" :shuffle} glutton-bolt :p 2)
     "hashtag-bolt" (bolt-spec {"spout" ["tweet"]} extract-hashtag-bolt :p 2)
-    "sliding-count-bolt" (bolt-spec {"spout" ["type"]} sliding-count-bolt)
+    "sliding-count-bolt" (bolt-spec {"hashtag-bolt" ["hashtag"]} sliding-count-bolt)
     }))
 
 (defn run! [& {debug "debug" workers "workers" :or {debug "true" workers "2"}}]

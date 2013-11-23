@@ -34,12 +34,22 @@ https://github.com/nathanmarz/storm/wiki/Clojure-DSL"
 (defn current-slot []
   (mod (rem (System/currentTimeMillis) 1000) WINDOW_SIZE_SEC))
 
-(defbolt sliding-count-bolt ["stormy"] [{type :type :as tuple} collector]
-  (let [counts (atom {})]
-    (bolt
-      (execute [tuple]
-               (let [word (tuple :type)]
-                 (bump-count! counts word (current-slot))
-                 (emit-bolt! collector [@counts] :anchor tuple)
-                 (ack! collector tuple)
-                 )))))
+(def counts (atom {}))
+
+; Matt's original
+; (defbolt sliding-count-bolt ["counts"] [{tag :hashtag :as tuple} collector]
+;   (let [counts (atom {})]
+;     (bolt
+;       (execute [tuple]
+;                (let [word (tuple :hashtag)]
+;                  (print word)
+;                  (bump-count! counts word (current-slot))
+;                  (emit-bolt! collector [@counts] :anchor tuple)
+;                  (ack! collector tuple)
+;                  )))))
+
+(defbolt sliding-count-bolt ["counts"] [{tag :hashtag :as tuple} collector]
+  (print tag)
+  (bump-count! counts tag (current-slot))
+  (emit-bolt! collector [@counts] :anchor tuple)
+  (ack! collector tuple))
