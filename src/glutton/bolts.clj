@@ -22,3 +22,24 @@ https://github.com/nathanmarz/storm/wiki/Clojure-DSL"
 (defbolt glutton-bolt ["message"] [{stormy :stormy :as tuple} collector]
   (emit-bolt! collector [(str "glutton produced: "stormy)] :anchor tuple)
   (ack! collector tuple))
+
+;; below is untested
+
+(def ^:const WINDOW_SIZE_SEC 10)
+
+(defn bump-count! [counts word slot]
+  (swap! counts
+         (fn [p] (update-in p [word slot] (fnil inc 0)))))
+
+(defn current-slot []
+  (mod (rem (System/currentTimeMillis) 1000) WINDOW_SIZE_SEC))
+
+(defbolt sliding-count-bolt ["stormy"] [{type :type :as tuple} collector]
+  (let [counts (atom {})]
+    (bolt
+      (execute [tuple]
+               (let [word (tuple :type)]
+                 (bump-count! counts word (current-slot))
+                 (emit-bolt! collector [@counts] :anchor tuple)
+                 (ack! collector tuple)
+                 )))))
